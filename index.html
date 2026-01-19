@@ -1,25 +1,131 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="eng">
 <head>
-    <title> www.mediamanif.org </title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <title>www.mediamanif.org</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-image: url('chicity.png');
+            background-image: url('carteflou.jpeg');
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
+        .clickable-zone {
+            position: fixed;
+            top: 20px;
+            left: 30%;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .clickable-zone:hover {
+            background-color: transparent;
+        }
+        .video-container {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 30px;
+            width: 320px;
+            background-color: #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        .video-container.active {
+            display: block;
+        }
+        .video-container video {
+            width: 100%;
+            display: block;
+        }
+        .video-container video::-webkit-media-controls-mute-button {
+            display: none;
+        }
+        .video-container video::-webkit-media-controls-volume-slider {
+            display: none;
+        }
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 25px;
+            text-align: center;
+            z-index: 10;
+        }
+        .close-btn:hover {
+            background-color: #fff;
+        }
+        .toggle-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .toggle-switch.active {
+            background-color: #000000;
+        }
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
     </style>
 </head>
 <body>
-
-</body> 
+    <div class="clickable-zone" onclick="showVideo()"></div>
+    
+    <div class="video-container" id="videoContainer">
+        <button class="close-btn" onclick="closeVideo()">×</button>
+        <video id="videoPlayer" controls muted>
+            <source src="camera.mp4" type="video/mp4">
+            
+        </video>
+    </div>
+    
+    <div class="toggle-container">
+        <div class="toggle-switch" id="toggle" onclick="toggleSwitch()">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+    
+    <header>
+    
+    </header>
 
     <main>
        
@@ -32,8 +138,31 @@
         
     </footer>
 
+    <script>
+        function showVideo() {
+            const container = document.getElementById('videoContainer');
+            const video = document.getElementById('videoPlayer');
+            video.muted = true;
+            container.classList.add('active');
+            video.play();
+        }
+        
+        function closeVideo() {
+            const container = document.getElementById('videoContainer');
+            const video = document.getElementById('videoPlayer');
+            container.classList.remove('active');
+            video.pause();
+            video.currentTime = 0;
+        }
+        
+        function toggleSwitch() {
+            const toggle = document.getElementById('toggle');
+            toggle.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
+
 
 
 
