@@ -31,7 +31,6 @@
         .video-container {
             display: none;
             position: fixed;
-            left: 30px;
             width: 320px;
             background-color: #000;
             border-radius: 8px;
@@ -139,33 +138,33 @@
         const videoContainersRoot = document.getElementById('videoContainersRoot');
 
         function createUI() {
-            const baseTop = 20;           // top start position in px
-            const verticalSpacing = 60;   // space between clickable zones (px)
-            const containerLeft = 30;     // left position for video containers (px)
-            const containerTopStart = 20; // first video container top (px)
+            // Positionnement en diagonale : chaque zone est légèrement plus à droite et plus bas que la précédente.
+            const baseTop = 40;           // top start position in px for the first clickable zone
+            const baseLeft = 40;          // left start position in px for the first clickable zone
+            const verticalStep = 70;      // vertical spacing between clickable zones (px)
+            const horizontalStep = 90;    // horizontal spacing between clickable zones (px)
+            const containerOffsetX = 60;  // distance (px) from the zone to the video container's left
 
             videoFiles.forEach((file, index) => {
-                const i = index + 1;
-
                 // clickable zone
                 const zone = document.createElement('div');
                 zone.className = 'clickable-zone';
-                // position zones vertically so they don't overlap
-                zone.style.top = (baseTop + index * verticalSpacing) + 'px';
-                // adjust left so zones are near the same place as original (use percentage)
-                zone.style.left = '30%';
-                zone.title = `Ouvrir la vidéo ${i}`;
+                // place each zone diagonally (down & right)
+                zone.style.top = (baseTop + index * verticalStep) + 'px';
+                zone.style.left = (baseLeft + index * horizontalStep) + 'px';
+                zone.title = `Ouvrir la vidéo ${index + 1}`;
                 zone.dataset.index = index;
                 zone.addEventListener('click', () => showVideo(index));
                 clickZonesRoot.appendChild(zone);
 
-                // video container
+                // video container (placed near its corresponding zone)
                 const vc = document.createElement('div');
                 vc.className = 'video-container';
                 vc.id = `videoContainer-${index}`;
-                // place containers stacked downwards to avoid overlapping the same spot
-                vc.style.top = (containerTopStart + index * (containerLeft + 40)) + 'px';
-                vc.style.left = containerLeft + 'px';
+
+                // place container to the right of the zone, vertically aligned with the zone
+                vc.style.top = (baseTop + index * verticalStep) + 'px';
+                vc.style.left = (baseLeft + index * horizontalStep + containerOffsetX) + 'px';
 
                 // close button
                 const closeBtn = document.createElement('button');
@@ -203,7 +202,8 @@
                 v.closest('.video-container').classList.remove('active');
             });
             container.classList.add('active');
-            video.muted = true;
+            // keep videos muted by default; toggle controls mute/unmute globally
+            video.muted = document.getElementById('toggle').classList.contains('active') ? false : true;
             // attempt to play; some browsers require user gesture (click is a gesture) so it's OK
             video.play().catch(err => {
                 // ignore play errors (autoplay policies), user can press play manually
@@ -226,7 +226,7 @@
             const toggle = document.getElementById('toggle');
             toggle.classList.toggle('active');
 
-            // example behaviour: when active -> unmute all visible videos; when inactive -> mute them
+            // comportement : quand actif -> dé-sourcer (unmute) toutes les vidéos visibles ; sinon -> mute toutes
             const shouldUnmute = toggle.classList.contains('active');
             document.querySelectorAll('.video-container video').forEach(video => {
                 video.muted = !shouldUnmute;
