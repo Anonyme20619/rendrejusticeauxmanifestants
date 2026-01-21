@@ -55,6 +55,7 @@ html, body {
     border-radius: 8px;
     display: none;
     z-index: 50;
+    overflow: hidden;
 }
 
 .video-container.active {
@@ -64,6 +65,20 @@ html, body {
 .video-container video {
     width: 100%;
     display: block;
+}
+
+.video-container .play-pause-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 51;
 }
 
 .close-btn {
@@ -78,7 +93,7 @@ html, body {
     font-weight: bold;
 }
 
-/* === TOGGLE (OPTIONNEL) === */
+/* === TOGGLE fullscreen === */
 .toggle-container {
     position: fixed;
     bottom: 30px;
@@ -227,21 +242,32 @@ function showVideo(index, zone) {
             <video autoplay playsinline>
                 <source src="${videoFiles[index]}" type="video/mp4">
             </video>
+            <button class="play-pause-btn">❚❚</button>
         `;
         document.body.appendChild(vc);
 
         const videoEl = vc.querySelector('video');
+        const playBtn = vc.querySelector('.play-pause-btn');
 
-        // Force muet et volume à 0
+        // Verrouillage du son
         videoEl.muted = true;
         videoEl.volume = 0;
         videoEl.play();
-
-        // Empêche tout changement de volume
         videoEl.addEventListener('volumechange', () => {
             if (!videoEl.muted || videoEl.volume !== 0) {
                 videoEl.muted = true;
                 videoEl.volume = 0;
+            }
+        });
+
+        // Lecture/pause personnalisée
+        playBtn.addEventListener('click', () => {
+            if (videoEl.paused) {
+                videoEl.play();
+                playBtn.textContent = '❚❚';
+            } else {
+                videoEl.pause();
+                playBtn.textContent = '▶';
             }
         });
     }
