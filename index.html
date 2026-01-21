@@ -14,10 +14,12 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
-
-        /* clickable zones: vivid blue so you can see & move them manually in HTML/CSS */
+#map-container {
+  position: relative;
+}
+/* clickable zones: vivid blue so you can see & move them manually in HTML/CSS */
         .clickable-zone {
-            position: fixed;
+            position: absolute;
             width: 50px;
             height: 50px;
             background-color: rgba(0, 122, 255, 0.95); /* vivid blue */
@@ -138,13 +140,9 @@
   <img src="carte.png" style="width:100%; display:block;">
 </div>
     
-    <div id="map-container"> #map-container {
-  position: relative;
-}
-.clickable-zone {
-  position: absolute;
-}
-  <img src="carte.png">
+    <div id="map-container"> 
+      <img src="carte.png">
+        
       <div class="clickable-zone" data-index="0" data-top="10px"  data-left="38,22%">1</div>
       <div class="clickable-zone" data-index="1" data-top="30px"  data-left="39,19%">2</div>
       <div class="clickable-zone" data-index="2" data-top="51px" data-left="40,95%">3</div>
@@ -450,6 +448,7 @@ map.addEventListener("click", function (e) {
     </script>
 </body>
 </html>
+
 
 
 
