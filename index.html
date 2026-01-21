@@ -35,25 +35,22 @@ html, body {
     position: absolute;
     width: 25px;
     height: 25px;
-
-    background: transparent;
-    border: none;
+    background: rgba(0,122,255,0.95);
+    border: 2px solid #fff;
     border-radius: 6px;
-
     cursor: pointer;
     z-index: 10;
 
     display: flex;
     align-items: center;
     justify-content: center;
-
-    color: transparent;
+    color: white;
+    font-weight: bold;
     user-select: none;
 }
 
-/* feedback discret au survol (optionnel mais conseillé) */
 .clickable-zone:hover {
-    outline: 2px dashed rgba(0,122,255,0.4);
+    filter: brightness(1.1);
 }
 
 /* === VIDEO === */
@@ -122,12 +119,48 @@ html, body {
 .toggle-switch.active .toggle-slider {
     transform: translateX(26px);
 }
+
+/* === la vidéo === */
+.fullscreen-video {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+}
+
+.fullscreen-video.active {
+    display: flex;
+}
+
+.fullscreen-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.fullscreen-video .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    font-size: 24px;
+    z-index: 201;
+}
 </style>
 </head>
 
 <body>
 
-<!-- === MAP === -->
+<!-- === carte === -->
 <div id="map-container">
     <img src="chicity.png" alt="Carte">
 
@@ -153,8 +186,16 @@ html, body {
     </div>
 </div>
 
+
+<div class="fullscreen-video" id="fullscreenVideo">
+    <button class="close-btn" onclick="closeFullscreenVideo()">×</button>
+    <video id="fullscreenPlayer" controls autoplay muted>
+        <source src="el vidéo.mp4" type="video/mp4">
+    </video>
+</div>
+
 <script>
-/* === DATA === */
+
 const BASE = 'https://vilverr.github.io/projetmanif/';
 const videoFiles = [
     BASE + 'CAM_20260114085243_0003_D.mp4',
@@ -171,7 +212,7 @@ const videoFiles = [
     BASE + 'CAM_20260114100025_0019_D.mp4',
 ];
 
-/* === ZONE INIT === */
+
 document.querySelectorAll('.clickable-zone').forEach(zone => {
     zone.style.top = zone.dataset.top;
     zone.style.left = zone.dataset.left;
@@ -182,7 +223,7 @@ document.querySelectorAll('.clickable-zone').forEach(zone => {
     });
 });
 
-/* === VIDEO LOGIC === */
+
 function showVideo(index, zone) {
     let vc = document.getElementById('video-' + index);
 
@@ -247,7 +288,31 @@ function closeVideo(index) {
 
 /* === TOGGLE === */
 function toggleSwitch() {
-    document.getElementById('toggle').classList.toggle('active');
+    const toggle = document.getElementById('toggle');
+    const fullscreenVideo = document.getElementById('fullscreenVideo');
+    const video = document.getElementById('fullscreenPlayer');
+    
+    toggle.classList.toggle('active');
+    
+    if (toggle.classList.contains('active')) {
+        fullscreenVideo.classList.add('active');
+        video.play();
+    } else {
+        fullscreenVideo.classList.remove('active');
+        video.pause();
+        video.currentTime = 0;
+    }
+}
+
+function closeFullscreenVideo() {
+    const toggle = document.getElementById('toggle');
+    const fullscreenVideo = document.getElementById('fullscreenVideo');
+    const video = document.getElementById('fullscreenPlayer');
+    
+    toggle.classList.remove('active');
+    fullscreenVideo.classList.remove('active');
+    video.pause();
+    video.currentTime = 0;
 }
 </script>
 
@@ -315,26 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
