@@ -41,7 +41,7 @@ html, body {
     z-index: 10;
 }
 
-/* === VIDEO CONTAINERS (INCHANGÉ) === */
+/* === VIDEO CONTAINERS === */
 .video-container {
     position: fixed;
     width: 320px;
@@ -127,7 +127,10 @@ html, body {
 .fullscreen-video {
     display: none;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.95);
     z-index: 200;
     align-items: center;
@@ -163,6 +166,222 @@ html, body {
 <div id="map-container">
     <img src="chicity.png" alt="Carte">
 
-    <div class="clickable-zone" data-index="0" data-top="11px" data-left="31%"></div>
-    <div class="clickable-zone" data-index="1" data-top="40px" data-left="33%"></div>
-    <div class="clickable-zone" data-index="
+    <div class="clickable-zone" data-index="0" data-top="11px" data-left="31%">1</div>
+    <div class="clickable-zone" data-index="1" data-top="40px" data-left="33%">2</div>
+    <div class="clickable-zone" data-index="2" data-top="80px" data-left="36%">3</div>
+    <div class="clickable-zone" data-index="3" data-top="190px" data-left="44%">4</div>
+    <div class="clickable-zone" data-index="4" data-top="200px" data-left="45%">5</div>
+    <div class="clickable-zone" data-index="5" data-top="210px" data-left="47%">6</div>
+    <div class="clickable-zone" data-index="6" data-top="450px" data-left="62%">7</div>
+    <div class="clickable-zone" data-index="7" data-top="530px" data-left="69%">8</div>
+    <div class="clickable-zone" data-index="8" data-top="595px" data-left="72%">9</div>
+    <div class="clickable-zone" data-index="9" data-top="640px" data-left="76%">10</div>
+    <div class="clickable-zone" data-index="10" data-top="659px" data-left="75%">11</div>
+    <div class="clickable-zone" data-index="11" data-top="672px" data-left="76%">12</div>
+    <div class="clickable-zone" data-index="12" data-top="660px" data-left="78%">13</div>
+</div>
+
+<!-- === TOGGLE fullscreen === -->
+<div class="toggle-container">
+    <div class="toggle-switch" id="toggle" onclick="toggleSwitch()">
+        <div class="toggle-slider"></div>
+    </div>
+</div>
+
+<!-- === VIDEO FULLSCREEN === -->
+<div class="fullscreen-video" id="fullscreenVideo">
+    <button class="close-btn" onclick="closeFullscreenVideo()">×</button>
+    <video id="fullscreenPlayer" controls muted playsinline></video>
+</div>
+
+<script>
+/* === PETITES VIDÉOS === */
+const BASE = 'https://vilverr.github.io/rendrejusticeauxmanifestants/';
+const videoFiles = [
+    BASE + 'CAM_20260114085243_0003_D.mp4',
+    BASE + 'CAM_20260114085533_0004_D.mp4',
+    BASE + 'CAM_20260114090317_0006_D.mp4',
+    BASE + 'CAM_20260114091848_0009_D.mp4',
+    BASE + 'CAM_20260114092103_0010_D (1).mp4',
+    BASE + 'CAM_20260114092103_0010_D (7).mp4',
+    BASE + 'CAM_20260114093921_0014_D.mp4',
+    BASE + 'CAM_20260114094456_0015_D.mp4',
+    BASE + 'CAM_20260114095021_0016_D.mp4',
+    BASE + 'CAM_20260114095352_0017_D.mp4',
+    BASE + 'CAM_20260114095731_0018_D.mp4',
+    BASE + 'CAM_20260114100025_0019_D.mp4',
+    BASE + 'fefnfn.mp4',
+];
+
+/* === GROSSE VIDEO DRIVE === */
+const FULLSCREEN_VIDEO_URL =
+'https://drive.usercontent.google.com/download?id=1rdcVZeasS8MnhwU6w-w4turDU4gdD4hv';
+
+/* === CLICKABLE ZONES === */
+document.querySelectorAll('.clickable-zone').forEach(zone => {
+    zone.style.top = zone.dataset.top;
+    zone.style.left = zone.dataset.left;
+
+    zone.addEventListener('click', e => {
+        e.stopPropagation();
+        showVideo(zone.dataset.index, zone);
+    });
+});
+
+/* === SHOW VIDEO (inchangé) === */
+function showVideo(index, zone) {
+    let vc = document.getElementById('video-' + index);
+
+    if (!vc) {
+        vc = document.createElement('div');
+        vc.className = 'video-container';
+        vc.id = 'video-' + index;
+        vc.innerHTML = `
+            <button class="close-btn" onclick="closeVideo(${index})">×</button>
+            <video autoplay playsinline muted>
+                <source src="${videoFiles[index]}" type="video/mp4">
+            </video>
+            <button class="play-pause-btn">❚❚</button>
+        `;
+        document.body.appendChild(vc);
+
+        const videoEl = vc.querySelector('video');
+        const playBtn = vc.querySelector('.play-pause-btn');
+
+        videoEl.muted = true;
+        videoEl.volume = 0;
+        videoEl.play();
+        videoEl.addEventListener('volumechange', () => {
+            if (!videoEl.muted || videoEl.volume !== 0) {
+                videoEl.muted = true;
+                videoEl.volume = 0;
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (videoEl.paused) {
+                videoEl.play();
+                playBtn.textContent = '❚❚';
+            } else {
+                videoEl.pause();
+                playBtn.textContent = '▶';
+            }
+        });
+    }
+
+    document.querySelectorAll('.video-container')
+        .forEach(v => v.classList.remove('active'));
+
+    vc.classList.add('active');
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const vcRect = vc.getBoundingClientRect();
+    const r = zone.getBoundingClientRect();
+
+    let top  = r.bottom + 10;
+    let left = r.left;
+
+    if (top + vcRect.height > vh) top = r.top - vcRect.height - 10;
+    if (top < 10) top = 10;
+    if (left + vcRect.width > vw) left = r.right - vcRect.width;
+    if (left < 10) left = 10;
+
+    vc.style.top  = `${top}px`;
+    vc.style.left = `${left}px`;
+}
+
+/* === CLOSE VIDEO === */
+function closeVideo(index) {
+    document.getElementById('video-' + index)?.classList.remove('active');
+}
+
+/* === TOGGLE FULLSCREEN === */
+function toggleSwitch() {
+    const toggle = document.getElementById('toggle');
+    const fullscreenVideo = document.getElementById('fullscreenVideo');
+    const video = document.getElementById('fullscreenPlayer');
+    
+    toggle.classList.toggle('active');
+    
+    if (toggle.classList.contains('active')) {
+
+        if (!video.src) {
+            video.src = FULLSCREEN_VIDEO_URL;
+        }
+
+        fullscreenVideo.classList.add('active');
+        video.play();
+
+    } else {
+        fullscreenVideo.classList.remove('active');
+        video.pause();
+        video.currentTime = 0;
+    }
+}
+
+/* === CLOSE FULLSCREEN === */
+function closeFullscreenVideo() {
+    const toggle = document.getElementById('toggle');
+    const fullscreenVideo = document.getElementById('fullscreenVideo');
+    const video = document.getElementById('fullscreenPlayer');
+    
+    toggle.classList.remove('active');
+    fullscreenVideo.classList.remove('active');
+    video.pause();
+    video.currentTime = 0;
+}
+
+/* === DEBUG CLICK IMAGE === */
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('map-container');
+    const img = container?.querySelector('img');
+
+    if (!img) {
+        console.error('❌ image introuvable');
+        return;
+    }
+
+    img.addEventListener('click', e => {
+        const containerRect = container.getBoundingClientRect();
+        const imgRect = img.getBoundingClientRect();
+
+        const naturalRatio = img.naturalWidth / img.naturalHeight;
+        const containerRatio = containerRect.width / containerRect.height;
+
+        let realWidth, realHeight, offsetX, offsetY;
+
+        if (containerRatio > naturalRatio) {
+            realHeight = containerRect.height;
+            realWidth = realHeight * naturalRatio;
+            offsetX = (containerRect.width - realWidth) / 2;
+            offsetY = 0;
+        } else {
+            realWidth = containerRect.width;
+            realHeight = realWidth / naturalRatio;
+            offsetX = 0;
+            offsetY = (containerRect.height - realHeight) / 2;
+        }
+
+        const x = e.clientX - containerRect.left - offsetX;
+        const y = e.clientY - containerRect.top - offsetY;
+
+        if (x < 0 || y < 0 || x > realWidth || y > realHeight) return;
+
+        const percentX = (x / realWidth * 100).toFixed(3);
+        const pixelY = y.toFixed(1);
+
+        console.clear();
+        console.log('📍 CLICK IMAGE (CORRIGÉ CONTAIN)');
+        console.log(`X réel : ${x.toFixed(1)}px | ${percentX}%`);
+        console.log(`Y réel : ${pixelY}px`);
+        console.log('--- HTML À COPIER ---');
+        console.log(
+            `<div class="clickable-zone" data-top="${pixelY}px" data-left="${percentX}%"></div>`
+        );
+    });
+});
+</script>
+
+</body>
+</html>
