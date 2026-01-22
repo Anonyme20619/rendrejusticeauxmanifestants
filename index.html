@@ -35,13 +35,19 @@ html, body {
     position: absolute;
     width: 25px;
     height: 25px;
+
     background: transparent;
     border: none;
+    border-radius: 0;
+
     cursor: pointer;
     z-index: 10;
+
+    color: transparent;
+    user-select: none;
 }
 
-/* === VIDEO CONTAINERS === */
+/* === VIDEO === */
 .video-container {
     position: fixed;
     width: 320px;
@@ -123,7 +129,7 @@ html, body {
     transform: translateX(26px);
 }
 
-/* === VIDEO FULLSCREEN === */
+/* === la vidéo fullscreen === */
 .fullscreen-video {
     display: none;
     position: fixed;
@@ -154,6 +160,7 @@ html, body {
     width: 40px;
     height: 40px;
     background: rgba(255, 255, 255, 0.9);
+    color: #000;
     font-size: 24px;
     z-index: 201;
 }
@@ -162,7 +169,7 @@ html, body {
 
 <body>
 
-<!-- === CARTE === -->
+<!-- === carte === -->
 <div id="map-container">
     <img src="chicity.png" alt="Carte">
 
@@ -188,14 +195,14 @@ html, body {
     </div>
 </div>
 
-<!-- === VIDEO FULLSCREEN === -->
 <div class="fullscreen-video" id="fullscreenVideo">
     <button class="close-btn" onclick="closeFullscreenVideo()">×</button>
-    <video id="fullscreenPlayer" controls muted playsinline></video>
+    <video id="fullscreenPlayer" controls autoplay muted>
+        <source src="el vidéo.mp4" type="video/mp4">
+    </video>
 </div>
 
 <script>
-/* === PETITES VIDÉOS === */
 const BASE = 'https://vilverr.github.io/rendrejusticeauxmanifestants/';
 const videoFiles = [
     BASE + 'CAM_20260114085243_0003_D.mp4',
@@ -213,11 +220,6 @@ const videoFiles = [
     BASE + 'fefnfn.mp4',
 ];
 
-/* === GROSSE VIDEO DRIVE === */
-const FULLSCREEN_VIDEO_URL =
-'https://drive.usercontent.google.com/download?id=1rdcVZeasS8MnhwU6w-w4turDU4gdD4hv';
-
-/* === CLICKABLE ZONES === */
 document.querySelectorAll('.clickable-zone').forEach(zone => {
     zone.style.top = zone.dataset.top;
     zone.style.left = zone.dataset.left;
@@ -228,7 +230,6 @@ document.querySelectorAll('.clickable-zone').forEach(zone => {
     });
 });
 
-/* === SHOW VIDEO (inchangé) === */
 function showVideo(index, zone) {
     let vc = document.getElementById('video-' + index);
 
@@ -238,7 +239,7 @@ function showVideo(index, zone) {
         vc.id = 'video-' + index;
         vc.innerHTML = `
             <button class="close-btn" onclick="closeVideo(${index})">×</button>
-            <video autoplay playsinline muted>
+            <video autoplay playsinline>
                 <source src="${videoFiles[index]}" type="video/mp4">
             </video>
             <button class="play-pause-btn">❚❚</button>
@@ -248,6 +249,7 @@ function showVideo(index, zone) {
         const videoEl = vc.querySelector('video');
         const playBtn = vc.querySelector('.play-pause-btn');
 
+        // Verrouillage du son
         videoEl.muted = true;
         videoEl.volume = 0;
         videoEl.play();
@@ -258,6 +260,7 @@ function showVideo(index, zone) {
             }
         });
 
+        // Lecture/pause personnalisée
         playBtn.addEventListener('click', () => {
             if (videoEl.paused) {
                 videoEl.play();
@@ -269,11 +272,13 @@ function showVideo(index, zone) {
         });
     }
 
+    // Ferme les autres vidéos
     document.querySelectorAll('.video-container')
         .forEach(v => v.classList.remove('active'));
 
     vc.classList.add('active');
 
+    // --- Positionnement ---
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const vcRect = vc.getBoundingClientRect();
@@ -291,12 +296,11 @@ function showVideo(index, zone) {
     vc.style.left = `${left}px`;
 }
 
-/* === CLOSE VIDEO === */
 function closeVideo(index) {
     document.getElementById('video-' + index)?.classList.remove('active');
 }
 
-/* === TOGGLE FULLSCREEN === */
+/* === TOGGLE fullscreen === */
 function toggleSwitch() {
     const toggle = document.getElementById('toggle');
     const fullscreenVideo = document.getElementById('fullscreenVideo');
@@ -305,14 +309,8 @@ function toggleSwitch() {
     toggle.classList.toggle('active');
     
     if (toggle.classList.contains('active')) {
-
-        if (!video.src) {
-            video.src = FULLSCREEN_VIDEO_URL;
-        }
-
         fullscreenVideo.classList.add('active');
         video.play();
-
     } else {
         fullscreenVideo.classList.remove('active');
         video.pause();
@@ -320,7 +318,6 @@ function toggleSwitch() {
     }
 }
 
-/* === CLOSE FULLSCREEN === */
 function closeFullscreenVideo() {
     const toggle = document.getElementById('toggle');
     const fullscreenVideo = document.getElementById('fullscreenVideo');
@@ -331,8 +328,9 @@ function closeFullscreenVideo() {
     video.pause();
     video.currentTime = 0;
 }
+</script>
 
-/* === DEBUG CLICK IMAGE === */
+<script>
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('map-container');
     const img = container?.querySelector('img');
