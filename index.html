@@ -6,7 +6,6 @@
 <title>www.mediamanif.org</title>
 
 <style>
-/* === RESET === */
 html, body {
     margin: 0;
     padding: 0;
@@ -16,7 +15,6 @@ html, body {
     background: black;
 }
 
-/* === MAP === */
 #map-container {
     position: relative;
     width: 100vw;
@@ -30,7 +28,6 @@ html, body {
     display: block;
 }
 
-/* === ZONES === */
 .clickable-zone {
     position: absolute;
     width: 25px;
@@ -47,7 +44,6 @@ html, body {
     user-select: none;
 }
 
-/* === VIDEO === */
 .video-container {
     position: fixed;
     width: 320px;
@@ -93,7 +89,6 @@ html, body {
     font-weight: bold;
 }
 
-/* === TOGGLE fullscreen === */
 .toggle-container {
     position: fixed;
     bottom: 30px;
@@ -129,7 +124,6 @@ html, body {
     transform: translateX(26px);
 }
 
-/* === la vidéo fullscreen === */
 .fullscreen-video {
     display: none;
     position: fixed;
@@ -187,14 +181,12 @@ html, body {
     <div class="clickable-zone" data-index="12" data-top="660px" data-left="78%">13</div>
 </div>
 
-<!-- === TOGGLE fullscreen === -->
 <div class="toggle-container">
     <div class="toggle-switch" id="toggle" onclick="toggleSwitch()">
         <div class="toggle-slider"></div>
     </div>
 </div>
 
-<!-- === GROSSE VIDEO FULLSCREEN (YouTube) === -->
 <div class="fullscreen-video" id="fullscreenVideo">
     <button class="close-btn" onclick="closeFullscreenVideo()">×</button>
     <iframe id="fullscreenPlayer" 
@@ -209,7 +201,7 @@ html, body {
 </div>
 
 <script>
-const BASE = 'https://vilverr.github.io/rendrejusticeauxmanifestants/';
+const BASE = 'https://anonyme20619.github.io/rendrejusticeauxmanifestants/';
 const videoFiles = [
     BASE + 'CAM_20260114085243_0003_D.mp4',
     BASE + 'CAM_20260114085533_0004_D.mp4',
@@ -255,7 +247,6 @@ function showVideo(index, zone) {
         const videoEl = vc.querySelector('video');
         const playBtn = vc.querySelector('.play-pause-btn');
 
-        // Verrouillage du son
         videoEl.muted = true;
         videoEl.volume = 0;
         videoEl.play();
@@ -266,7 +257,6 @@ function showVideo(index, zone) {
             }
         });
 
-        // Lecture/pause personnalisée
         playBtn.addEventListener('click', () => {
             if (videoEl.paused) {
                 videoEl.play();
@@ -278,13 +268,11 @@ function showVideo(index, zone) {
         });
     }
 
-    // Ferme les autres vidéos
     document.querySelectorAll('.video-container')
         .forEach(v => v.classList.remove('active'));
 
     vc.classList.add('active');
 
-    // --- Positionnement ---
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const vcRect = vc.getBoundingClientRect();
@@ -306,7 +294,6 @@ function closeVideo(index) {
     document.getElementById('video-' + index)?.classList.remove('active');
 }
 
-/* === TOGGLE fullscreen === */
 function toggleSwitch() {
     const toggle = document.getElementById('toggle');
     const fullscreenVideo = document.getElementById('fullscreenVideo');
@@ -384,4 +371,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
